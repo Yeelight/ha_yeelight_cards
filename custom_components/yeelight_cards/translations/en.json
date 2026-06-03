@@ -1,0 +1,10 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Yeelight Cards",
+        "description": "Yeelight Lovelace 卡片已安装。"
+      }
+    }
+  }
+}
