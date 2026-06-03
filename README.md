@@ -1,154 +1,159 @@
 # Yeelight Cards
 
-Yeelight 专用的 Lovelace 自定义卡片集合。
+[English](README.md) | [中文](README_zh.md)
 
-## 功能特性
+Custom Lovelace card collection for Yeelight devices.
 
-- ✅ 灯光控制卡片（亮度、色温、RGB）
-- ✅ 场景卡片（场景激活和管理）
-- ✅ 设备状态卡片
-- ✅ 空调控制卡片
-- ✅ 窗帘控制卡片
-- ✅ 风扇控制卡片
-- ✅ 门锁控制卡片
-- ✅ 扫地机器人卡片
-- ✅ 多种卡片变体
+## Features
 
-## 安装
+- ✅ Light control card (brightness, color temperature, RGB)
+- ✅ Scene card (scene activation and management)
+- ✅ Device status card
+- ✅ Climate control card
+- ✅ Cover control card
+- ✅ Fan control card
+- ✅ Lock control card
+- ✅ Vacuum card
+- ✅ Multiple card variants
 
-### HACS 安装（推荐）
+## Installation
 
-1. 打开 HACS
-2. 搜索 "Yeelight Cards"
-3. 点击安装
-4. 重启 Home Assistant
+### HACS Installation (Recommended)
 
-### 手动安装
+1. Open HACS
+2. Search for "Yeelight Cards"
+3. Click Install
+4. Restart Home Assistant
 
-1. 下载最新版本
-2. 解压到 `custom_components/yeelight_cards/`
-3. 将 `www/yeelight_cards/` 复制到 `config/www/`
-4. 重启 Home Assistant
+### Manual Installation
 
-## 卡片列表
+1. Download the latest release
+2. Extract to `custom_components/yeelight_cards/`
+3. Copy `www/yeelight_cards/` to `config/www/`
+4. Restart Home Assistant
+
+## Card List
 
 ### yeelight-light-card
 
-灯光控制卡片，支持亮度、色温、RGB 控制。
+Light control card with brightness, color temperature, and RGB support.
 
 ```yaml
 type: custom:yeelight-light-card
 entity: light.yeelight_bedroom
-name: 卧室灯
+name: Bedroom Light
 variant: detailed
 ```
 
-**变体**：
-- `simple`：简洁模式
-- `detailed`：详细模式
-- `slider`：滑块模式
-- `knob`：旋钮模式
+**Variants**:
+
+- `simple`: Simple mode
+- `detailed`: Detailed mode
+- `slider`: Slider mode
+- `knob`: Knob mode
 
 ### yeelight-scene-card
 
-场景卡片，支持场景激活和管理。
+Scene card for scene activation and management.
 
 ```yaml
 type: custom:yeelight-scene-card
 entity: scene.movie_mode
-name: 观影模式
+name: Movie Mode
 variant: grid
 ```
 
-**变体**：
-- `grid`：网格模式
-- `list`：列表模式
-- `carousel`：轮播模式
+**Variants**:
+
+- `grid`: Grid mode
+- `list`: List mode
+- `carousel`: Carousel mode
 
 ### yeelight-device-card
 
-设备状态卡片，显示设备状态和控制。
+Device status card showing device state and controls.
 
 ```yaml
 type: custom:yeelight-device-card
 entity: switch.yeelight_plug
-name: 智能插座
+name: Smart Plug
 variant: status
 ```
 
-**变体**：
-- `status`：状态模式
-- `control`：控制模式
-- `detail`：详情模式
+**Variants**:
+
+- `status`: Status mode
+- `control`: Control mode
+- `detail`: Detail mode
 
 ### yeelight-climate-card
 
-空调控制卡片。
+Climate control card.
 
 ```yaml
 type: custom:yeelight-climate-card
 entity: climate.yeelight_ac
-name: 空调
+name: Air Conditioner
 ```
 
 ### yeelight-cover-card
 
-窗帘控制卡片。
+Cover control card.
 
 ```yaml
 type: custom:yeelight-cover-card
 entity: cover.yeelight_curtain
-name: 窗帘
+name: Curtain
 ```
 
 ### yeelight-fan-card
 
-风扇控制卡片。
+Fan control card.
 
 ```yaml
 type: custom:yeelight-fan-card
 entity: fan.yeelight_fan
-name: 风扇
+name: Fan
 ```
 
 ### yeelight-lock-card
 
-门锁控制卡片。
+Lock control card.
 
 ```yaml
 type: custom:yeelight-lock-card
 entity: lock.yeelight_door_lock
-name: 门锁
+name: Door Lock
 ```
 
 ### yeelight-vacuum-card
 
-扫地机器人卡片。
+Vacuum robot card.
 
 ```yaml
 type: custom:yeelight-vacuum-card
 entity: vacuum.yeelight_robot
-name: 扫地机器人
+name: Robot Vacuum
 ```
 
-## 配置选项
+## Configuration Options
 
-所有卡片都支持以下配置选项：
+All cards support the following configuration options:
 
-| 选项 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `entity` | string | 必填 | 实体 ID |
-| `name` | string | 实体名称 | 卡片名称 |
-| `variant` | string | 默认变体 | 卡片变体 |
-| `tap_action` | object | - | 点击动作 |
-| `hold_action` | object | - | 长按动作 |
-| `show_header` | boolean | true | 显示头部 |
-| `show_state` | boolean | true | 显示状态 |
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `entity` | string | Required | Entity ID |
+| `name` | string | Entity name | Card name |
+| `variant` | string | Default variant | Card variant |
+| `tap_action` | object | - | Tap action |
+| `hold_action` | object | - | Hold action |
+| `show_header` | boolean | true | Show header |
+| `show_state` | boolean | true | Show state |
 
-## 依赖
+## Dependencies
 
-- **ha_yeelight_pro**：Yeelight Pro 集成（软依赖）
+- **ha_yeelight_pro**: Yeelight Pro integration (soft dependency)
 
-## 许可证
+## License
 
 MIT License
