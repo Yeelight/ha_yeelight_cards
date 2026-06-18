@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yeelight Cards Harness</title>
+    <script type="module" src="../dist/ha_yeelight_cards.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        background: #f4f5f7;
+        font-family: system-ui, sans-serif;
+        color: #202124;
+        --ha-card-background: #fff;
+        --ha-card-border-radius: 12px;
+        --primary-color: #1976d2;
+        --primary-text-color: #202124;
+        --secondary-text-color: #5f6368;
+        --secondary-background-color: #eef2f6;
+        --divider-color: rgba(0, 0, 0, 0.14);
+      }
+
+      #cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+      }
+
+      ha-icon {
+        width: 22px;
+        height: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cards"></div>
+    <script type="module">
+      class HaIcon extends HTMLElement {
+        set icon(value) {
+          this.textContent = value || "";
+        }
+      }
+      class HaCard extends HTMLElement {
+        connectedCallback() {
+          if (!this.shadowRoot) {
+            const root = this.attachShadow({ mode: "open" });
+            root.innerHTML = `<style>:host{display:block;border-radius:var(--ha-card-border-radius);background:var(--ha-card-background);box-shadow:0 1px 3px rgba(0,0,0,.18)}::slotted(*){box-sizing:border-box}</style><slot></slot>`;
+          }
+        }
+      }
+      class HaForm extends HTMLElement {
+        set hass(value) {
+          this._hass = value;
+        }
+        get hass() {
+          return this._hass;
+        }
+        set data(value) {
+          this._data = value;
+        }
+        get data() {
+          return this._data || {};
+        }
+        set schema(value) {
+          this._schema = value;
+          this.render();
+        }
+        get schema() {
+          return this._schema || [];
+        }
+        set computeLabel(value) {
+          this._computeLabel = value;
+          this.render();
+        }
+        set computeHelper(value) {
+          this._computeHelper = value;
+          this.render();
+        }
+        connectedCallback() {
+          this.render();
+        }
+        render() {
+          const schema = this._schema || [];
+          const rows = flattenSchema(schema)
+            .map((item) => {
+              const label = this._computeLabel?.(item) || item.name || "";
+              const helper = this._computeHelper?.(item) || "";
+              return `<label><span>${label}</span>${helper ? `<small>${helper}</small>` : ""}</label>`;
+            })
+            .join("");
+          this.innerHTML = `<style>:host{display:grid;gap:10px}label{display:grid;gap:3px;font-size:13px}small{color:var(--secondary-text-color)}</style>${rows}`;
+        }
+      }
+      customElements.define("ha-icon", HaIcon);
+      customElements.define("ha-card", HaCard);
+      customElements.define("ha-form", HaForm);
+
+      const serviceCalls = [];
+      const hass = {
+        connected: true,
+        locale: { language: "zh-Hans" },
+        states: {
+          "light.main": state("light.main", "on", { friendly_name: "Yeelight Main Light", brightness: 180, effect_list: ["Movie", "Night"] }),
+          "light.strip": state("light.strip", "on", { friendly_name: "Yeelight Strip", brightness: 120, effect_list: ["Gradient", "Flow"] }),
+          "light.ambient": state("light.ambient", "off", { friendly_name: "Ambient Light" }),
+          "switch.relay": state("switch.relay", "off", { friendly_name: "Relay" }),
+          "sensor.lux": state("sensor.lux", "328", { friendly_name: "Illuminance", unit_of_measurement: "lx" }),
+          "sensor.firmware": state("sensor.firmware", "1.2.3", { friendly_name: "Yeelight firmware" }),
+          "binary_sensor.lan": state("binary_sensor.lan", "on", { friendly_name: "LAN Control" }),
+          "select.mode": state("select.mode", "Near", { friendly_name: "Mode", options: ["Near", "Far"] }),
+          "button.scene": state("button.scene", "unknown", { friendly_name: "Movie scene" }),
+          "number.timeout": state("number.timeout", "1", { friendly_name: "Timeout", min: 0, max: 10, step: 1 })
+        },
+        callService: async (domain, service, data) => serviceCalls.push({ domain, service, data }),
+        callWS: async ({ type }) => {
+          if (type === "entity_registry/list" || type === "config/entity_registry/list") {
+            return Object.keys(hass.states).map((entity_id) => ({ entity_id, platform: "yeelight_pro", device_id: entity_id === "sensor.firmware" || entity_id === "binary_sensor.lan" ? "gateway" : "lamp-main" }));
+          }
+          return [];
+        }
+      };
+
+      window.yeelightHarness = {
+        serviceCalls,
+        mountAll() {
+          const configs = [
+            ["yeelight-light-card", { type: "custom:yeelight-light-card", entity: "light.main", state_color: true }],
+            ["yeelight-room-card", { type: "custom:yeelight-room-card", entity: "light.main" }],
+            ["yeelight-scene-card", { type: "custom:yeelight-scene-card", entity: "select.mode" }],
+            ["yeelight-strip-card", { type: "custom:yeelight-strip-card", entity: "light.strip" }],
+            ["yeelight-health-card", { type: "custom:yeelight-health-card", entity: "sensor.firmware" }],
+            ["yeelight-channel-card", { type: "custom:yeelight-channel-card", entity: "light.main" }],
+            ["yeelight-panel-card", { type: "custom:yeelight-panel-card", entity: "button.scene" }],
+            ["yeelight-device-card", { type: "custom:yeelight-device-card", entity: "number.timeout" }]
+          ];
+          const root = document.querySelector("#cards");
+          root.replaceChildren();
+          for (const [tag, config] of configs) {
+            const element = document.createElement(tag);
+            element.setConfig(config);
+            element.hass = hass;
+            root.append(element);
+          }
+        },
+        mountEditor() {
+          const editor = document.createElement("ha-yeelight-card-editor");
+          editor.setConfig({ type: "custom:yeelight-device-card", entity: "light.main" });
+          editor.hass = hass;
+          document.body.append(editor);
+          return editor;
+        }
+      };
+
+      function state(entity_id, stateValue, attributes) {
+        return { entity_id, state: stateValue, attributes, last_changed: new Date().toISOString() };
+      }
+
+      function flattenSchema(schema) {
+        return schema.flatMap((item) => (Array.isArray(item.schema) ? flattenSchema(item.schema) : [item]));
+      }
+    </script>
+  </body>
+</html>

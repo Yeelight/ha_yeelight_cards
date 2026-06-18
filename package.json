@@ -1,0 +1,28 @@
+{
+  "name": "ha_yeelight_cards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Home Assistant native Lovelace cards with optional Yeelight enhancements.",
+  "scripts": {
+    "build": "vite build",
+    "lint": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:browser": "node scripts/browser-assertions.mjs",
+    "test:ha-live": "node scripts/ha-live-assertions.mjs"
+  },
+  "dependencies": {
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "happy-dom": "^20.10.3",
+    "playwright": "^1.61.0",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
