@@ -83,4 +83,12 @@ describe("config", () => {
     const docs = ["README.md", "README_zh.md"].map((file) => readFileSync(resolve(import.meta.dirname, "..", file), "utf8")).join("\n");
     expect(docs).not.toMatch(/\bprefer_yeelight\b|\bshow_brand\b/);
   });
+
+  it("documents the HACS dashboard quick-install contract", () => {
+    const docs = ["README.md", "README_zh.md"].map((file) => readFileSync(resolve(import.meta.dirname, "..", file), "utf8")).join("\n");
+    expect(docs).toContain("https://github.com/Yeelight/ha_yeelight_cards");
+    expect(docs).toContain("category=plugin");
+    expect(docs).toContain("Dashboard");
+    expect(docs).toContain("/hacsfiles/ha_yeelight_cards/ha_yeelight_cards.js");
+  });
 });
