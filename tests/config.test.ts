@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { execFileSync } from "node:child_process";
 import { normalizeConfig } from "../src/config";
 import { CARD_DEFINITIONS } from "../src/cards/definitions";
 
@@ -90,5 +91,13 @@ describe("config", () => {
     expect(docs).toContain("category=plugin");
     expect(docs).toContain("Dashboard");
     expect(docs).toContain("/hacsfiles/ha_yeelight_cards/ha_yeelight_cards.js");
+  });
+
+  it("keeps the HACS dashboard bundle visible to Git", () => {
+    expect(() =>
+      execFileSync("git", ["check-ignore", "-q", "dist/ha_yeelight_cards.js"], {
+        cwd: resolve(import.meta.dirname, "..")
+      })
+    ).toThrow();
   });
 });

@@ -1,4 +1,6 @@
 node_modules/
 dist/
+!dist/
+!dist/ha_yeelight_cards.js
 coverage/
 .DS_Store
